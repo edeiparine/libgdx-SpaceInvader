@@ -10,8 +10,12 @@ import com.mygdx.game.TextureManager;
  */
 public class Player extends Entity {
 
-    public Player(Vector2 pos, Vector2 direction) {
+    private final EntityManager entityManager;
+    private long lastFire;
+
+    public Player(Vector2 pos, Vector2 direction, EntityManager entityManager) {
         super(TextureManager.PLAYER, pos, direction);
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -30,5 +34,12 @@ public class Player extends Entity {
             setDirection(0, 0);
         }
 
+
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (System.currentTimeMillis() - lastFire >= 250) {
+                entityManager.addEntity(new Missile(pos.cpy().add(44 , TextureManager.PLAYER.getHeight())));
+                lastFire = System.currentTimeMillis();
+            }
+        }
     }
 }
