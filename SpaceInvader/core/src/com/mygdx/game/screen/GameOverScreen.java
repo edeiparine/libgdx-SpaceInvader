@@ -1,55 +1,63 @@
 package com.mygdx.game.screen;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.SpaceInvader;
+import com.mygdx.game.TextureManager;
 import com.mygdx.game.camera.OrthoCamera;
-import com.mygdx.game.entitity.EntityManager;
 
-public class GameScreen extends Screen {
+/**
+ * Created by lavacake on 3/29/2015.
+ */
+public class GameOverScreen extends Screen {
 
     private OrthoCamera camera;
-    private EntityManager entityManager;
+    private Texture texture;
+
+    public GameOverScreen(boolean won) {
+        if (won)
+            texture = TextureManager.GAME_WON;
+        else
+            texture = TextureManager.GAME_OVER;
+    }
 
     @Override
     public void create() {
         camera = new OrthoCamera();
-        entityManager = new EntityManager(camera);
+        camera.resize();
     }
 
     @Override
     public void update() {
         camera.update();
-        entityManager.update();
+
     }
 
     @Override
     public void render(SpriteBatch sb) {
         sb.setProjectionMatrix(camera.combined);
-
         sb.begin();
-        entityManager.render(sb);
+        sb.draw(texture, SpaceInvader.WIDTH / 2 - texture.getWidth() / 2, SpaceInvader.HEIGHT / 2 - texture.getHeight() / 2);
         sb.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        camera.resize();
-        System.out.println("resize");
+
     }
 
     @Override
     public void dispose() {
-        System.out.println("dispose");
 
     }
 
     @Override
     public void pause() {
-        System.out.println("pause");
 
     }
 
     @Override
     public void resume() {
-        System.out.println("resume");
+
     }
 }

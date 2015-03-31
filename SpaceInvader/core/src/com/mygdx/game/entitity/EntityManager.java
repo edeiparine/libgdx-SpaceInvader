@@ -6,23 +6,35 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.SpaceInvader;
 import com.mygdx.game.TextureManager;
+import com.mygdx.game.camera.OrthoCamera;
+import com.mygdx.game.screen.GameOverScreen;
+import com.mygdx.game.screen.ScreenManager;
 
-/**
- * Created by lavacake on 3/26/2015.
- */
 public class EntityManager {
 
     private final Array<Entity> entities = new Array<Entity>();
     private Player player;
 
-    public EntityManager(int amount) {
-        player = new Player(new Vector2(230, 10), new Vector2(0, 0), this);
-        for (int i = 0; i < amount; i++) {
+    public EntityManager(OrthoCamera camera) {
+
+        player = new Player(new Vector2(230, 10), new Vector2(0, 0), this, camera);
+
+        boolean spawnEnemies = true;
+        boolean respawnEnemies = false;
+
+        int numberOfEnemies = 0;
+        while (spawnEnemies) {
             float x = MathUtils.random(0, SpaceInvader.WIDTH - TextureManager.ENEMY.getWidth());
             float y = MathUtils.random(SpaceInvader.HEIGHT, SpaceInvader.HEIGHT * 3);
             float speed = MathUtils.random(2, 5);
             addEntity(new Enemy(new Vector2(x, y), new Vector2(0, -speed)));
 
+            numberOfEnemies++;
+            if (numberOfEnemies == 1) {
+//            for (int i = 0; i < spawnEnemies; i++) {
+                System.out.println(numberOfEnemies + " number of total enemies spawned");
+                spawnEnemies = false;
+            }
         }
     }
 
@@ -31,11 +43,12 @@ public class EntityManager {
             e.update();
         }
 
-        for(Missile m : getMissile()) {
+        for (Missile m : getMissile()) {
             if (m.checkEnd()) {
                 entities.removeValue(m, false);
             }
         }
+
         player.update();
         checkCollisions();
     }
@@ -44,17 +57,22 @@ public class EntityManager {
         for (Entity e : entities) {
             e.render(sb);
         }
-
         player.render(sb);
     }
 
     private void checkCollisions() {
         for (Enemy e : getEnemies()) {
             for (Missile m : getMissile()) {
-                if(e.getBounds().contains(m.getBounds())) {
+                if (e.getBounds().overlaps(m.getBounds())) {
                     entities.removeValue(e, false);
                     entities.removeValue(m, false);
+                    if (gameOver()) {
+                        ScreenManager.setScreen(new GameOverScreen(true));
+                    }
                 }
+            }
+            if (e.getBounds().overlaps(player.getBounds())) {
+                ScreenManager.setScreen(new GameOverScreen(false));
             }
         }
     }

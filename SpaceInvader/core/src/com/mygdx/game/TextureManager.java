@@ -10,4 +10,6 @@ public class TextureManager {
     public static Texture PLAYER = new Texture(Gdx.files.internal("player.png"));
     public static Texture ENEMY = new Texture(Gdx.files.internal("meteor.png"));
     public static Texture MISSILE = new Texture(Gdx.files.internal("missile.png"));
+    public static Texture GAME_WON = new Texture(Gdx.files.internal("finish.png"));
+    public static Texture GAME_OVER = new Texture(Gdx.files.internal("gameover.png"));
 }
